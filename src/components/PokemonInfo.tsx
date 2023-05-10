@@ -1,14 +1,6 @@
 import styled from '@emotion/styled/macro';
 import { formatNumbering, mapColorToHex, mapTypeToHex } from '../utils';
-import { Color } from '../types';
-
-type Type = {
-  slot: number;
-  type: {
-    name: string;
-    url: string;
-  };
-};
+import { Color, Type } from '../types';
 
 type Props = {
   id: string;

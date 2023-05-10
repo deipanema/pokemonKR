@@ -1,7 +1,6 @@
 import axios, { AxiosResponse } from 'axios';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, UseQueryResult } from '@tanstack/react-query';
 // import { PokemonResponse } from '../types';
-import { UseQueryResult } from '@tanstack/react-query';
 
 /**
  * 매개변수 id를 전달받아 해당 한 포켓몬의 정보를 가져옵니다.
