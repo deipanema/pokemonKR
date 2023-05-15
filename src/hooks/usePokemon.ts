@@ -16,5 +16,6 @@ const pokemonAPI = (id?: string) =>
 export default function usePokemon<T>(
   id?: string
 ): UseQueryResult<AxiosResponse<T>, Error> {
+  console.log(id);
   return useQuery(id ? ['pokemon', id] : ['pokemon'], () => pokemonAPI(id));
 }

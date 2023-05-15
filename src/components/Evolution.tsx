@@ -3,6 +3,7 @@ import { Color } from '../types';
 import { mapColorToHex } from '../utils';
 
 type Props = {
+  isLoading: boolean;
   id?: string;
   color?: Color;
   url?: string;
@@ -56,7 +57,12 @@ const Empty = styled.div<{ color: string }>`
   color: ${({ color }) => color};
 `;
 
-export default function Evolution({ url, color }: Props): JSX.Element {
+export default function Evolution({
+  id,
+  isLoading,
+  url,
+  color,
+}: Props): JSX.Element {
   return (
     <Base>
       <Title color={mapColorToHex(color?.name)}>Evolution</Title>

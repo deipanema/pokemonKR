@@ -1,9 +1,11 @@
 import styled from '@emotion/styled/macro';
 import { mapColorToHex } from '../utils';
-import { Color } from '../types';
+import { Color, Stat } from '../types';
 
 type Props = {
+  isLoading: boolean;
   color?: Color;
+  stats?: Array<Stat>;
 };
 
 const Base = styled.div`
@@ -53,24 +55,32 @@ const GaugeWrapper = styled.div`
   background-color: #e5e7eb;
 `;
 
-const Gauge = styled.div<{ color: string }>`
+const Gauge = styled.div<{ percentage: number; color: string }>`
   background-color: ${({ color }) => color};
+  width: ${({ percentage }) => `${percentage}%`};
   height: 100%;
   border-radius: 12px;
 `;
 
-export default function Stats({ color }: Props): JSX.Element {
+export default function Stats({ isLoading, color, stats }: Props): JSX.Element {
   return (
     <Base>
       <Title color={mapColorToHex(color?.name)}>Base Stats</Title>
       <List>
-        <ListItem>
-          <Name>name</Name>
-          <Amount>amount</Amount>
-          <GaugeWrapper>
-            <Gauge color={mapColorToHex(color?.name)} />
-          </GaugeWrapper>
-        </ListItem>
+        {stats?.map(({ stat, base_stat }, idx) => (
+          <ListItem key={idx}>
+            <Name>
+              {stat.name === 'hp' ? stat.name.toUpperCase() : stat.name}
+            </Name>
+            <Amount>{base_stat}</Amount>
+            <GaugeWrapper>
+              <Gauge
+                percentage={(base_stat / 255) * 100}
+                color={mapColorToHex(color?.name)}
+              />
+            </GaugeWrapper>
+          </ListItem>
+        ))}
       </List>
     </Base>
   );

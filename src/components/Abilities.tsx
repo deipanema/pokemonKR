@@ -1,5 +1,6 @@
 import styled from '@emotion/styled/macro';
-import { Ability, Color } from '../types';
+import useAbilities from '../hooks/useAbilities';
+import { Ability, Color, FlavorTextEntries } from '../types';
 import { mapColorToHex } from '../utils';
 
 type Props = {
@@ -49,14 +50,31 @@ const Description = styled.span`
 `;
 
 export default function Abilities({ abilities, color }: Props): JSX.Element {
+  const abilityData = useAbilities(abilities);
+
+  const getFlavorText = (flavorEntries: Array<FlavorTextEntries>) => {
+    console.log(flavorEntries);
+    return (
+      flavorEntries.find((flavorText) => flavorText.language.name === 'ko') ||
+      flavorEntries[0]
+    );
+  };
+
   return (
     <Base>
       <Title color={mapColorToHex(color?.name)}>Abilities</Title>
       <List>
-        <ListItem>
-          <Label>Label</Label>
-          <Description>Description</Description>
-        </ListItem>
+        {abilityData.map(
+          ({ data }, idx) =>
+            data && (
+              <ListItem key={idx}>
+                <Label>{data.data.name}</Label>
+                <Description>
+                  {getFlavorText(data.data.flavor_text_entries).flavor_text}
+                </Description>
+              </ListItem>
+            )
+        )}
       </List>
     </Base>
   );

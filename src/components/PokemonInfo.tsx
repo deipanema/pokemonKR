@@ -5,8 +5,8 @@ import { Color, Type } from '../types';
 type Props = {
   id: string;
   name?: string;
-  color?: Color;
   types?: Array<Type>;
+  color?: Color;
 };
 
 const Base = styled.div<{ color?: string }>`
@@ -89,13 +89,13 @@ const Image = styled.img`
 export default function PokemonInfo({
   id,
   name,
-  color,
   types,
+  color,
 }: Props): JSX.Element {
   return (
     <Base color={mapColorToHex(color?.name)}>
       <ImageWrapper>
-        <Image src='/asset/poketball.svg' />
+        <Image src='/assets/pocketball.svg' alt='poketball' />
       </ImageWrapper>
       <InfoWrapper>
         <Name>{name}</Name>

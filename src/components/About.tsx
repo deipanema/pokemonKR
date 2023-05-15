@@ -1,13 +1,15 @@
 import styled from '@emotion/styled/macro';
-import { Ability, Color, Type } from '../types';
-import { mapTypeToHex, mapColorToHex } from '../utils';
+import { Ability, Color, FlavorTextEntry, Type } from '../types';
+import { mapTypeToHex } from '../utils';
 import Abilities from './Abilities';
+import PokedexData from './PokedexData';
 
 type Props = {
   isLoading: boolean;
   color?: Color;
   growthRate?: string;
-  flavorText?: string;
+  flavorText?: Array<FlavorTextEntry>;
+  //flavorText?: string;
   genderRate?: number;
   isLegendary?: boolean;
   isMythical?: boolean;
@@ -70,41 +72,6 @@ const Image = styled.img`
   object-fit: contain;
 `;
 
-const InfoContainerWrapper = styled.div`
-  margin-top: 32px;
-`;
-
-const Title = styled.h4<{ color: string }>`
-  margin: 0;
-  padding: 0;
-  font-size: 20px;
-  font-weight: bold;
-  color: ${({ color }) => color};
-`;
-
-const InfoContainer = styled.div`
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  margin-top: 20px;
-  row-gap: 12px;
-`;
-
-const InfoItem = styled.div`
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-`;
-
-const InfoItemLabel = styled.span`
-  font-weight: bold;
-  color: #374151;
-  font-size: 12px;
-`;
-
-const InfoItemValue = styled.span<{ color: string }>`
-  color: ${({ color }) => color};
-  font-size: 12px;
-`;
-
 export default function About({
   isLoading,
   isMythical,
@@ -121,71 +88,44 @@ export default function About({
 }: Props): JSX.Element {
   const rarity = isLegendary ? 'Legendary' : isMythical ? 'Mythical' : 'Normal';
 
+  const flavorTextArr = flavorText
+    ?.filter((text) => text.language.url.match(/\/3\/$/))
+    .filter((_, idx) => idx % 2 === 1);
+
   return (
     <Base>
-      <FlavorText>{flavorText}</FlavorText>
-      <TypeList>
-        {types?.map(({ type }, idx) => (
-          <TypeWrapper key={idx} color={mapTypeToHex(type.name)}>
-            <TypeImage src={`/assets/${type.name}.svg`} />
-            <TypeLabel>{type.name.toUpperCase()}</TypeLabel>
-          </TypeWrapper>
-        ))}
-      </TypeList>
-      <InfoContainerWrapper>
-        <Title color={mapColorToHex(color?.name)}>Pokédex Data</Title>
-        <InfoContainer>
-          <InfoItem>
-            <InfoItemLabel>Height</InfoItemLabel>
-            {height && (
-              <InfoItemValue color={mapColorToHex(color?.name)}>
-                {height / 10}m
-              </InfoItemValue>
-            )}
-          </InfoItem>
-          <InfoItem>
-            <InfoItemLabel>Weight</InfoItemLabel>
-            {weight && (
-              <InfoItemValue color={mapColorToHex(color?.name)}>
-                {weight / 10}kg
-              </InfoItemValue>
-            )}
-          </InfoItem>
-          <InfoItem>
-            <InfoItemLabel>Gender</InfoItemLabel>
-            {genderRate && (
-              <InfoItemValue color={mapColorToHex(color?.name)}>
-                {genderRate === -1 ? 'Unknown' : 'Male / Female'}
-              </InfoItemValue>
-            )}
-          </InfoItem>
-          <InfoItem>
-            <InfoItemLabel>Growth Rate</InfoItemLabel>
-            {growthRate && (
-              <InfoItemValue color={mapColorToHex(color?.name)}>
-                {growthRate}
-              </InfoItemValue>
-            )}
-          </InfoItem>
-          <InfoItem>
-            <InfoItemLabel>Base Exp</InfoItemLabel>
-            {baseExp && (
-              <InfoItemValue color={mapColorToHex(color?.name)}>
-                {baseExp}
-              </InfoItemValue>
-            )}
-          </InfoItem>
-          <InfoItem>
-            <InfoItemLabel>Rarity</InfoItemLabel>
-            {rarity && (
-              <InfoItemValue color={mapColorToHex(color?.name)}>
-                {rarity}
-              </InfoItemValue>
-            )}
-          </InfoItem>
-        </InfoContainer>
-      </InfoContainerWrapper>
-      {abilities && <Abilities abilities={abilities} color={color} />}
+      {/* <FlavorText>{flavorText}</FlavorText> */}
+      {flavorTextArr?.map((text, idx) => (
+        <FlavorText key={idx}>{text.flavor_text}</FlavorText>
+      ))}
+      {isLoading ? (
+        <ImageWrapper>
+          <Image src='/assets/loading.gif' alt='loading...' />
+        </ImageWrapper>
+      ) : (
+        <>
+          {types && (
+            <TypeList>
+              {types.map(({ type }, idx) => (
+                <TypeWrapper key={idx} color={mapTypeToHex(type.name)}>
+                  <TypeImage src={`/assets/${type.name}.svg`} />
+                  <TypeLabel>{type.name.toUpperCase()}</TypeLabel>
+                </TypeWrapper>
+              ))}
+            </TypeList>
+          )}
+          <PokedexData
+            weight={weight}
+            height={height}
+            genderRate={genderRate}
+            growthRate={growthRate}
+            baseExp={baseExp}
+            rarity={rarity}
+            color={color}
+          />
+          {abilities && <Abilities abilities={abilities} color={color} />}
+        </>
+      )}
     </Base>
   );
 }

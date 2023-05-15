@@ -39,6 +39,11 @@ export type Ability = {
   slot: number;
 };
 
+export type VersionGroup = {
+  name: string;
+  url: string;
+};
+
 export type Language = {
   name: string;
   url: string;
@@ -74,6 +79,12 @@ export type EffectEntry = {
   effect: string;
   language: Language;
   short_effect: string;
+};
+
+export type FlavorTextEntries = {
+  flavor_text: string;
+  language: Language;
+  version_group: VersionGroup;
 };
 
 export type SimplePokemonInfo = {
@@ -155,6 +166,7 @@ export type AbilityResponse = {
   names: Array<Name>;
   is_main_series: boolean;
   effect_entries: Array<EffectEntry>;
+  flavor_text_entries: Array<FlavorTextEntries>;
 };
 
 export type TypeResponse = {
