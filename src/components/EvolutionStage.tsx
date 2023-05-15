@@ -1,6 +1,7 @@
 import styled from '@emotion/styled/macro';
 import { Color } from '../types';
 import { mapColorToHex } from '../utils';
+import { useEvolutionChains } from '../hooks/usePokemon';
 
 type Props = {
   level: number;
@@ -50,18 +51,31 @@ const Image = styled.img`
   object-fit: contain;
 `;
 
-export default function EvolutionStage({ level, color }: Props): JSX.Element {
+export default function EvolutionStage({
+  from,
+  to,
+  level,
+  color,
+}: Props): JSX.Element {
+  const [prev, next] = useEvolutionChains([from.name, to.name]);
+
   return (
     <Base>
       <ImageWrapper>
-        <Image src={''} />
+        <Image
+          src={prev.data?.data.sprites.other['official-artwork'].front_default}
+        />
       </ImageWrapper>
       <DividerWrapper>
-        <Text color={mapColorToHex(color?.name)} />
+        {level && (
+          <Text color={mapColorToHex(color?.name)}>{`Level ${level}`}</Text>
+        )}
         <Divider />
       </DividerWrapper>
       <ImageWrapper>
-        <Image />
+        <Image
+          src={next.data?.data.sprites.other['official-artwork'].front_default}
+        />
       </ImageWrapper>
     </Base>
   );

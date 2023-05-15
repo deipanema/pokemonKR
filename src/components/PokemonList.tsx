@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled/macro';
 import usePokemon from '../hooks/usePokemon';
 import { formatNumbering } from '../utils';
@@ -29,6 +30,7 @@ const LoadingWrapper = styled.div`
 const Loading = styled.img``;
 
 const ListItem = styled.li`
+  cursor: pointer;
   position: relative;
   list-style: none;
   display: flex;
@@ -72,6 +74,11 @@ const getImageUrl = (pokemonIndex: number): string =>
   `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemonIndex}.png`;
 
 export default function PokemonList(): JSX.Element {
+  const navigate = useNavigate();
+  // const handleClick = (id: number) => {
+  //   navigate(`/pokemons/${id}`);
+  // };
+  //http://localhost:3000/pokemons/151
   const { isLoading, error, data } = usePokemon<ListResponse>();
 
   if (isLoading)
@@ -92,7 +99,12 @@ export default function PokemonList(): JSX.Element {
     <Base>
       <List>
         {data?.data.results.map((pokemon, idx) => (
-          <ListItem key={pokemon.name}>
+          <ListItem
+            key={pokemon.name}
+            onClick={() => {
+              navigate(`/pokemons/${idx + 1}`);
+            }}
+          >
             <Image src={getImageUrl(idx + 1)} />
             <Name>{pokemon.name}</Name>
             <Index>{formatNumbering(idx + 1)}</Index>

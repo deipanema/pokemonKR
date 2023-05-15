@@ -1,10 +1,12 @@
 import styled from '@emotion/styled/macro';
-import { Color } from '../types';
+import { useEffect, useState } from 'react';
+import useEvolutionChain from '../hooks/useEvolutionChain';
+import { Color, Chain } from '../types';
 import { mapColorToHex } from '../utils';
+import EvolutionStage from './EvolutionStage';
 
 type Props = {
-  isLoading: boolean;
-  id?: string;
+  name?: string;
   color?: Color;
   url?: string;
 };
@@ -57,16 +59,65 @@ const Empty = styled.div<{ color: string }>`
   color: ${({ color }) => color};
 `;
 
-export default function Evolution({
-  id,
-  isLoading,
-  url,
-  color,
-}: Props): JSX.Element {
+export default function Evolution({ name, url, color }: Props): JSX.Element {
+  const [evolutionChains, setEvolutionChains] = useState<
+    Array<{
+      from: { name: string; url: string };
+      to: { name: string; url: string };
+      level: number;
+    }>
+  >([]);
+
+  const { isSuccess, isError, isLoading, data } = useEvolutionChain(url);
+
+  useEffect(() => {
+    const makeEvolutionChain = (chain: Chain) => {
+      if (chain.evolves_to.length) {
+        const [evolvesTo] = chain.evolves_to;
+
+        const from = chain.species;
+        const to = evolvesTo.species;
+        const level = evolvesTo.evolution_details[0].min_level;
+
+        setEvolutionChains((prev) => [...prev, { from, to, level }]);
+
+        makeEvolutionChain(chain.evolves_to[0]);
+      }
+    };
+
+    isSuccess && data && makeEvolutionChain(data.data.chain);
+
+    return (): void => {
+      setEvolutionChains([]);
+    };
+  }, [isSuccess, data]);
+
   return (
     <Base>
       <Title color={mapColorToHex(color?.name)}>Evolution</Title>
-      <List></List>
+      {isLoading || isError ? (
+        <ImageWrapper>
+          <Image src='/assets/loading.gif' />
+        </ImageWrapper>
+      ) : evolutionChains.length ? (
+        <List>
+          {evolutionChains.map(({ from, to, level }, idx) => (
+            <EvolutionStage
+              key={idx}
+              from={from}
+              to={to}
+              level={level}
+              color={color}
+            />
+          ))}
+        </List>
+      ) : (
+        <EmptyWrapper>
+          <Empty color={mapColorToHex(color?.name)}>
+            {name}은(는) 진화하지 않습니다.
+          </Empty>
+        </EmptyWrapper>
+      )}
     </Base>
   );
 }

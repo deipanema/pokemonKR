@@ -102,12 +102,13 @@ export default function PokemonDetail(): JSX.Element {
         />
       )}
       {selectedTab === 'evolution' && (
-        <Evolution
-          id={id}
-          isLoading={species.isLoading}
-          color={color}
-          url={evolutionChainUrl}
-        />
+        <Evolution name={name} color={color} url={evolutionChainUrl} />
+        // <Evolution
+        //   id={id}
+        //   isLoading={species.isLoading}
+        //   color={color}
+        //   url={evolutionChainUrl}
+        // />
       )}
     </Container>
   );

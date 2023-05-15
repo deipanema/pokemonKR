@@ -53,7 +53,6 @@ export default function Abilities({ abilities, color }: Props): JSX.Element {
   const abilityData = useAbilities(abilities);
 
   const getFlavorText = (flavorEntries: Array<FlavorTextEntries>) => {
-    console.log(flavorEntries);
     return (
       flavorEntries.find((flavorText) => flavorText.language.name === 'ko') ||
       flavorEntries[0]

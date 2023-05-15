@@ -1,6 +1,6 @@
 import axios, { AxiosResponse } from 'axios';
-import { useQuery, UseQueryResult } from '@tanstack/react-query';
-// import { PokemonResponse } from '../types';
+import { useQuery, UseQueryResult, useQueries } from '@tanstack/react-query';
+import { PokemonResponse } from '../types';
 
 /**
  * 매개변수 id를 전달받아 해당 한 포켓몬의 정보를 가져옵니다.
@@ -16,6 +16,18 @@ const pokemonAPI = (id?: string) =>
 export default function usePokemon<T>(
   id?: string
 ): UseQueryResult<AxiosResponse<T>, Error> {
-  console.log(id);
   return useQuery(id ? ['pokemon', id] : ['pokemon'], () => pokemonAPI(id));
 }
+
+export const useEvolutionChains = (
+  names: string[]
+): Array<UseQueryResult<AxiosResponse<PokemonResponse>, Error>> => {
+  const queries = names.map((name, idx) => ({
+    queryKey: ['evolution', `${name}_${idx}`],
+    queryFn: () => pokemonAPI(name),
+  }));
+
+  return useQueries({ queries }) as Array<
+    UseQueryResult<AxiosResponse<PokemonResponse>, Error>
+  >;
+};
